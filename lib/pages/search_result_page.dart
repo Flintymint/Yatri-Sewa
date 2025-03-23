@@ -13,39 +13,62 @@ class SearchResultPage extends StatelessWidget {
     final argList = ModalRoute.of(context)!.settings.arguments as List;
     final BusRoute route = argList[0];
     final String departureDate = argList[1];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search Results'),
+        title: const Text('Search Results', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: [
-          Text(
-            'Showing results for ${route.cityFrom} to ${route.cityTo} on $departureDate',
-            style: const TextStyle(fontSize: 17),
-          ),
-          Consumer<AppDataProvider>(
-            builder: (context, provider, _) => FutureBuilder<List<BusSchedule>>(
-              future: provider.getSehedulesbyRouteName(route.routeName),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final scheduleList = snapshot.data!;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: scheduleList
-                        .map((schedule) => ScheduleItemView(
-                            schedule: schedule, date: departureDate))
-                        .toList(),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return const Text('Failed to fetch data');
-                }
-                return const Text('Please wait');
-              },
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Showing results for ${route.cityFrom} to ${route.cityTo} on $departureDate',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
-          )
-        ],
+            const SizedBox(height: 12),
+            Expanded(
+              child: Consumer<AppDataProvider>(
+                builder: (context, provider, _) => FutureBuilder<List<BusSchedule>>(
+                  future: provider.getSchedulesByRouteName(route.routeName),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Failed to fetch data', style: TextStyle(fontSize: 16, color: Colors.red)),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () => provider.getSchedulesByRouteName(route.routeName),
+                              child: const Text('Retry'),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                    final scheduleList = snapshot.data ?? [];
+                    if (scheduleList.isEmpty) {
+                      return const Center(
+                        child: Text('No buses available', style: TextStyle(fontSize: 16)),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: scheduleList.length,
+                      itemBuilder: (context, index) {
+                        return ScheduleItemView(schedule: scheduleList[index], date: departureDate);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -55,65 +78,72 @@ class ScheduleItemView extends StatelessWidget {
   final String date;
   final BusSchedule schedule;
 
-  const ScheduleItemView({Key? key, required this.schedule, required this.date})
-      : super(key: key);
+  const ScheduleItemView({Key? key, required this.schedule, required this.date}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.pushNamed(context, routeNameSeatPlanPage, arguments: [schedule, date]),
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(
+        context,
+        routeNameSeatPlanPage,
+        arguments: [schedule, date],
+      ),
       child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              title: Text(schedule.bus.busName),
-              subtitle: Text(schedule.bus.busType),
-              trailing: Text('$currency${schedule.ticketPrice}'),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                title: Text(
+                  schedule.bus.busName,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(schedule.bus.busType, style: const TextStyle(fontSize: 15)),
+                trailing: Text(
+                  '$currency${schedule.ticketPrice}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green),
+                ),
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'From: ${schedule.busRoute.cityFrom}',
-                    style: const TextStyle(
-                      fontSize: 17,
-                    ),
-                  ),
-                  Text(
-                    'To: ${schedule.busRoute.cityTo}',
-                    style: const TextStyle(
-                      fontSize: 17,
-                    ),
-                  ),
+                  _infoTile(Icons.location_on, 'From', schedule.busRoute.cityFrom),
+                  _infoTile(Icons.location_on, 'To', schedule.busRoute.cityTo),
                 ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Departure Time: ${schedule.departureTime}',
-                    style: const TextStyle(
-                      fontSize: 17,
-                    ),
-                  ),
-                  Text(
-                    'Total Seat: ${schedule.bus.totalSeat}',
-                    style: const TextStyle(
-                      fontSize: 17,
-                    ),
-                  ),
+                  _infoTile(Icons.access_time, 'Departure', schedule.departureTime),
+                  _infoTile(Icons.event_seat, 'Seats', '${schedule.bus.totalSeat}'),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _infoTile(IconData icon, String title, String value) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.blueGrey),
+        const SizedBox(width: 6),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+            Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ],
     );
   }
 }

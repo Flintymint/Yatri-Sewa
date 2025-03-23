@@ -7,6 +7,7 @@ import 'package:yatrisewa/models/bus_reservation.dart';
 import 'package:yatrisewa/models/bus_route.dart';
 import 'package:yatrisewa/models/bus_schedule.dart';
 import 'package:yatrisewa/models/response_model.dart';
+import 'package:yatrisewa/utils/constants.dart';
 
 class DummyDataSource extends DataSource{
   @override
@@ -16,9 +17,9 @@ class DummyDataSource extends DataSource{
   }
 
   @override
-  Future<ResponseModel> addReservation(BusReservation reservation) {
-    // TODO: implement addReservation
-    throw UnimplementedError();
+  Future<ResponseModel> addReservation(BusReservation reservation) async {
+    TempDB.tableReservation.add(reservation);
+    return ResponseModel(responseStatus: ResponseStatus.SAVED, statusCode: 200, message: 'Your reservation has been saved', object: {});
   }
 
   @override
@@ -64,9 +65,10 @@ class DummyDataSource extends DataSource{
   }
 
   @override
-  Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(int scheduleId, String departureDate) {
-    // TODO: implement getReservationsByScheduleAndDepartureDate
-    throw UnimplementedError();
+  Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(int scheduleId, String departureDate) async {
+    return TempDB.tableReservation
+        .where((element)=> element.busSchedule.scheduleId == scheduleId &&
+    element.departureDate == departureDate).toList();
   }
 
   @override

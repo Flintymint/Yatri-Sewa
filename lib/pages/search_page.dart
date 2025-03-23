@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yatrisewa/datasource/temp_db.dart';
+import 'package:yatrisewa/drawers/main_drawer.dart';
 import 'package:yatrisewa/providers/app_data_provider.dart';
 import 'package:yatrisewa/utils/constants.dart';
 import 'package:yatrisewa/utils/helper_functions.dart';
 
+
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  const SearchPage({Key? key}) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -18,15 +20,25 @@ class _SearchPageState extends State<SearchPage> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    fromCity = 'Kathmandu';
+    toCity = 'Butwal';
+    departureDate = DateTime.now();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MainDrawer(),
       appBar: AppBar(
-        title: Text('Search'),
+        title: const Text('Search'),
       ),
       body: Form(
         key: _formKey,
         child: Center(
           child: ListView(
+            shrinkWrap: true,
             padding: const EdgeInsets.all(8),
             children: [
               DropdownButtonFormField<String>(
@@ -41,11 +53,12 @@ class _SearchPageState extends State<SearchPage> {
                   errorStyle: const TextStyle(color: Colors.white),
                 ),
                 hint: const Text('From'),
+                isExpanded: true,
                 items: cities
                     .map((city) => DropdownMenuItem<String>(
-                          value: city,
-                          child: Text(city),
-                        ))
+                  value: city,
+                  child: Text(city),
+                ))
                     .toList(),
                 onChanged: (value) {
                   fromCity = value;
@@ -66,11 +79,12 @@ class _SearchPageState extends State<SearchPage> {
                   errorStyle: const TextStyle(color: Colors.white),
                 ),
                 hint: const Text('To'),
+                isExpanded: true,
                 items: cities
                     .map((city) => DropdownMenuItem<String>(
-                          value: city,
-                          child: Text(city),
-                        ))
+                  value: city,
+                  child: Text(city),
+                ))
                     .toList(),
                 onChanged: (value) {
                   toCity = value;
@@ -85,10 +99,7 @@ class _SearchPageState extends State<SearchPage> {
                       onPressed: _selectDate,
                       child: const Text('Select Departure Date'),
                     ),
-                    Text(departureDate == null
-                        ? 'No date chosen'
-                        : getFormattedDate(departureDate!,
-                            pattern: 'EEE MMM dd, yyyy')),
+                    Text(departureDate == null ? 'No date chosen' : getFormattedDate(departureDate!, pattern: 'EEE MMM dd, yyyy')),
                   ],
                 ),
               ),
@@ -110,12 +121,12 @@ class _SearchPageState extends State<SearchPage> {
 
   void _selectDate() async {
     final selectedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(const Duration(days: 7)),
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 7)),
     );
-    if (selectedDate != null) {
+    if(selectedDate != null) {
       setState(() {
         departureDate = selectedDate;
       });
@@ -125,14 +136,15 @@ class _SearchPageState extends State<SearchPage> {
   void _search() {
     if(departureDate == null) {
       showMsg(context, emptyDateErrMessage);
+      return;
     }
-
     if(_formKey.currentState!.validate()) {
       Provider.of<AppDataProvider>(context, listen: false)
           .getRouteByCityFromAndCityTo(fromCity!, toCity!)
-          .then((route){
+          .then((route) {
         Navigator.pushNamed(context, routeNameSearchResultPage, arguments: [route, getFormattedDate(departureDate!)]);
       });
     }
   }
 }
+

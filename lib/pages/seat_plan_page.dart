@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:yatrisewa/customwidgets/seat_plan_view.dart';
 import 'package:yatrisewa/models/bus_schedule.dart';
+import 'package:yatrisewa/providers/app_data_provider.dart';
 import 'package:yatrisewa/utils/colors.dart';
 import 'package:yatrisewa/utils/constants.dart';
+import 'package:yatrisewa/utils/helper_functions.dart';
 
 class SeatPlanPage extends StatefulWidget {
   const SeatPlanPage({Key? key}) : super(key: key);
@@ -26,7 +29,22 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
     final argList = ModalRoute.of(context)!.settings.arguments as List;
     schedule = argList[0];
     departureDate = argList[1];
+    _getData();
     super.didChangeDependencies();
+  }
+
+  _getData() async{
+    final resList = await Provider.of<AppDataProvider>(context, listen: false)
+        .getReservationsByScheduleAndDepartureDate(schedule.scheduleId!, departureDate);
+    setState(() {
+      isDataLoading = false;
+    });
+    List<String> seats = [];
+    for(final res in resList){
+      totalSeatBooked += res.totalSeatBooked;
+      seats.add((res.seatNumbers));
+    }
+    bookedSeatNumbers = seats.join(',');
   }
 
   @override
@@ -91,12 +109,17 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
                 style: const TextStyle(fontSize: 16),
               ),
             ),
-            Expanded(
+            if (!isDataLoading)Expanded(
                 child: SingleChildScrollView(
                   child: SeatPlanView(
                     onSeatSelected: (value, seat){
-
-                    },
+                      if(value) {
+                          selectedSeats.add(seat);
+                        }else{
+                          selectedSeats.remove(seat);
+                        }
+                      selectedSeatStringNotifier.value = selectedSeats.join(',');
+                      },
                     totalSeatBooked: totalSeatBooked,
                     bookedSeatNumbers: bookedSeatNumbers,
                     totalSeat: schedule.bus.totalSeat,
@@ -106,7 +129,11 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
             ),
             OutlinedButton(
               onPressed:(){
-                
+                if(selectedSeats.isEmpty){
+                  showMsg(context, 'Please select your seat first');
+                }
+                Navigator.pushNamed(context, routeNameBookingConfirmationPage,
+                arguments: [departureDate, schedule, selectedSeatStringNotifier.value, selectedSeats.length]);
               },
               child: const Text("NEXT"),
             )
