@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yatrisewa/datasource/data_source.dart';
 import 'package:yatrisewa/datasource/dummy_data_source.dart';
+import 'package:yatrisewa/models/reservation_expansion_item.dart';
 import 'package:yatrisewa/models/response_model.dart';
 
 import '../models/bus_model.dart';
@@ -11,19 +12,56 @@ import '../models/bus_route.dart';
 class AppDataProvider extends ChangeNotifier {
   List<Bus> _busList = [];
   List<BusRoute> _routeList = [];
-  List<BusReservation> _reervationList = [];
+  List<BusReservation> _reservationList = [];
   List<BusSchedule> _scheduleList = [];
+
   List<BusSchedule> get scheduleList => _scheduleList;
+
   List<Bus> get busList => _busList;
+
   List<BusRoute> get routeList => _routeList;
-  List<BusReservation> get reservationList => _reervationList;
+
+  List<BusReservation> get reservationList => _reservationList;
   final DataSource _dataSource = DummyDataSource();
+
+  Future<ResponseModel> addBus(Bus bus){
+    return _dataSource.addBus(bus);
+  }
+
+  Future<ResponseModel> addRoute(BusRoute route){
+    return _dataSource.addRoute(route);
+  }
+
+  Future<ResponseModel> addSchedule(BusSchedule busSchedule){
+    return _dataSource.addSchedule(busSchedule);
+  }
 
   Future<ResponseModel> addReservation(BusReservation reservation) {
     return _dataSource.addReservation(reservation);
   }
 
-  Future<BusRoute?> getRouteByCityFromAndCityTo(String cityFrom, String cityTo) {
+  void getAllBus() async{
+    _busList = await _dataSource.getAllBus();
+    notifyListeners();
+  }
+
+  void getAllBusRoutes() async{
+    _routeList = await _dataSource.getAllRoutes();
+    notifyListeners();
+  }
+
+  Future<List<BusReservation>> getAllReservation() async {
+    _reservationList = await _dataSource.getAllReservation();
+    notifyListeners();
+    return _reservationList;
+  }
+
+  Future<List<BusReservation>> getReservationsByMobile(String mobile){
+    return _dataSource.getReservationsByMobile(mobile);
+  }
+
+  Future<BusRoute?> getRouteByCityFromAndCityTo(
+      String cityFrom, String cityTo) {
     return _dataSource.getRouteByCityFromAndCityTo(cityFrom, cityTo);
   }
 
@@ -31,8 +69,30 @@ class AppDataProvider extends ChangeNotifier {
     return _dataSource.getSchedulesByRouteName(routeName);
   }
 
-  Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(int scheduleId, String departureDate) {
-    return _dataSource.getReservationsByScheduleAndDepartureDate(scheduleId, departureDate);
+  Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(
+      int scheduleId, String departureDate) {
+    return _dataSource.getReservationsByScheduleAndDepartureDate(
+        scheduleId, departureDate);
+  }
+
+  List<ReservationExpansionItem> getExpansionItems(List<BusReservation> reservationList) {
+    return List.generate(reservationList.length, (index) {
+      final reservation = reservationList[index];
+      return ReservationExpansionItem(
+        header: ReservationExpansionHeader(
+          reservationId: reservation.reservationId,
+          departureDate: reservation.departureDate,
+          schedule: reservation.busSchedule,
+          timestamp: reservation.timestamp,
+          reservationStatus: reservation.reservationStatus,
+        ),
+        body: ReservationExpansionBody(
+            customer: reservation.customer,
+            totalSeatedBooked: reservation.totalSeatBooked,
+            seatNumbers: reservation.seatNumbers,
+            totalPrice: reservation.totalPrice
+        ),
+      );
+    });
   }
 }
-

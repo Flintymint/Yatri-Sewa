@@ -1,8 +1,12 @@
+import 'package:provider/provider.dart';
 import 'package:yatrisewa/datasource/temp_db.dart';
 import 'package:flutter/material.dart';
 
+import '../drawers/main_drawer.dart';
 import '../models/bus_route.dart';
+import '../providers/app_data_provider.dart';
 import '../utils/constants.dart';
+import '../utils/helper_functions.dart';
 
 class AddRoutePage extends StatefulWidget {
   const AddRoutePage({Key? key}) : super(key: key);
@@ -18,6 +22,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MainDrawer(),
       appBar: AppBar(
         title: const Text('Add Route'),
       ),
@@ -109,6 +114,14 @@ class _AddRoutePageState extends State<AddRoutePage> {
         cityTo: to!,
         distanceInKm: double.parse(distanceController.text),
       );
+      Provider.of<AppDataProvider>(context, listen: false)
+          .addRoute(route)
+          .then((response){
+        if(response.responseStatus == ResponseStatus.SAVED){
+          showMsg(context, response.message);
+          resetFields();
+        }
+      });
     }
   }
   @override

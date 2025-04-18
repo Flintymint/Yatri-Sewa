@@ -16,9 +16,13 @@ const String routeNameSearchResultPage = 'search_result';
 const String routeNameLoginPage = 'login';
 const String routeNameSeatPlanPage = 'seat_plan';
 const String routeNameBookingConfirmationPage = 'booking_confirmation';
+//const String routeNameKhaltiPaymentPage = 'khalti_payment';// khalti payment
+
 const String routeNameAddBusPage = 'add_bus';
+const String routeNameViewBuses = "viewBuses";
 const String routeNameAddRoutePage = 'add_route';
 const String routeNameAddSchedulePage = 'add_schedule';
+const String routeNameViewBusSchedule = 'view_schedule';
 const String routeNameScheduleListPage = 'schedule_list';
 const String routeNameReservationPage = 'reservation';
 

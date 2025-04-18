@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:yatrisewa/datasource/temp_db.dart';
+import 'package:yatrisewa/providers/app_data_provider.dart';
+import 'package:yatrisewa/utils/helper_functions.dart';
+import '../drawers/main_drawer.dart';
 import '../models/bus_model.dart';
 import '../utils/constants.dart';
 
@@ -19,11 +24,20 @@ class _AddBusPageState extends State<AddBusPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MainDrawer(),
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text('Add Bus'),
         backgroundColor: Colors.black,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.view_list, color: Colors.white),
+            onPressed: () {
+              Navigator.pushNamed(context, routeNameViewBuses);
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Padding(
@@ -48,7 +62,6 @@ class _AddBusPageState extends State<AddBusPage> {
     );
   }
 
-  // Dropdown field with added icon and underline
   Widget _buildDropdownField(String hint, List<String> items) {
     return DropdownButtonFormField<String>(
       value: busType,
@@ -61,7 +74,6 @@ class _AddBusPageState extends State<AddBusPage> {
     );
   }
 
-  // Text field with underline
   Widget _buildTextField(TextEditingController controller, String hint, IconData icon, {bool isNumber = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -110,13 +122,19 @@ class _AddBusPageState extends State<AddBusPage> {
   void addBus() {
     if (_formKey.currentState!.validate()) {
       final bus = Bus(
-        busId: DateTime.now().millisecondsSinceEpoch,
+        busId: TempDB.tableBus.length + 1,
         busName: nameController.text,
         busNumber: numberController.text,
         busType: busType!,
         totalSeat: int.parse(seatController.text),
       );
-
+      Provider.of<AppDataProvider>(context, listen: false)
+          .addBus(bus)
+          .then((response){
+        if(response.responseStatus == ResponseStatus.SAVED){
+          showMsg(context, response.message);
+        }
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Bus added successfully!')),
       );

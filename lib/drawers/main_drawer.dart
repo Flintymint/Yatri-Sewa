@@ -16,6 +16,14 @@ class MainDrawer extends StatelessWidget {
           ListTile(
             onTap: () {
               Navigator.pop(context);
+              Navigator.pushNamed(context, routeNameHome);
+            },
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pop(context);
               Navigator.pushNamed(context, routeNameAddBusPage);
             },
             leading: const Icon(Icons.bus_alert),

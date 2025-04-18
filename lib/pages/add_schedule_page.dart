@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../datasource/temp_db.dart';
+import '../drawers/main_drawer.dart';
 import '../models/bus_model.dart';
 import '../models/bus_schedule.dart';
 import '../models/bus_route.dart';
@@ -25,6 +26,14 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
   final priceController = TextEditingController();
   final discountController = TextEditingController();
   final feeController = TextEditingController();
+
+  @override
+  void didChangeDependencies() {
+    _getData();
+    super.didChangeDependencies();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,6 +169,10 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
   }
 
   void addSchedule() {
+    if(timeOfDay == null) {
+      showMsg(context, 'Please select a departure date');
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       final schedule = BusSchedule(
         scheduleId: TempDB.tableSchedule.length + 1,
@@ -170,6 +183,15 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
         discount: int.parse(discountController.text),
         processingFee: int.parse(feeController.text),
       );
+      Provider.of<AppDataProvider>(context, listen: false)
+          .addSchedule(schedule)
+          .then((response) {
+        if(response.responseStatus == ResponseStatus.SAVED) {
+          showMsg(context, response.message);
+          resetFields();
+        }
+      });
+
     }
   }
 
@@ -195,5 +217,10 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
     priceController.clear();
     discountController.clear();
     feeController.clear();
+  }
+
+  void _getData() {
+    Provider.of<AppDataProvider>(context, listen: false).getAllBus();
+    Provider.of<AppDataProvider>(context, listen: false).getAllBusRoutes();
   }
 }
