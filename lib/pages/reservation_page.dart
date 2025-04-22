@@ -19,25 +19,21 @@ class ReservationPage extends StatefulWidget {
 class _ReservationPageState extends State<ReservationPage> {
   bool isFirst = true;
   List<ReservationExpansionItem> items = [];
-
   @override
   void didChangeDependencies() {
-    if (isFirst) {
+    if(isFirst) {
       _getData();
     }
     super.didChangeDependencies();
   }
 
   _getData() async {
-    final reservations = await Provider.of<AppDataProvider>(context, listen: false)
-        .getAllReservation();
-    items = Provider.of<AppDataProvider>(context, listen: false)
-        .getExpansionItems(reservations);
+    final reservations = await Provider.of<AppDataProvider>(context, listen: false).getAllReservations();
+    items = Provider.of<AppDataProvider>(context, listen: false).getExpansionItems(reservations);
     setState(() {
 
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,21 +44,21 @@ class _ReservationPageState extends State<ReservationPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SearchBox(onSubmit: (value){
+            SearchBox(onSubmit: (value) {
               _search(value);
             }),
             ExpansionPanelList(
               expansionCallback: (index, isExpanded) {
                 setState(() {
-                  items[index].isExpanded = !isExpanded;
+                  items[index].isExpanded = isExpanded;
                 });
               },
               children: items.map((item) => ExpansionPanel(
-                isExpanded: item.isExpanded,
-                headerBuilder: (context, isExpanded) => ReservationItemHeaderView(header: item.header),
-                body: ReservationItemBodyView(body: item.body,)
+                  isExpanded: item.isExpanded,
+                  headerBuilder: (context, isExpanded) => ReservationItemHeaderView(header: item.header),
+                  body: ReservationItemBodyView(body: item.body,)
               )).toList(),
-            )
+            ),
           ],
         ),
       ),
@@ -70,13 +66,13 @@ class _ReservationPageState extends State<ReservationPage> {
   }
 
   void _search(String value) async {
-    final data = await Provider.of<AppDataProvider>(context,listen: false).getReservationsByMobile(value);
-    if(data.isEmpty){
-      showMsg(context, 'No record Found');
+    final data = await Provider.of<AppDataProvider>(context, listen: false).getReservationsByMobile(value);
+    if(data.isEmpty) {
+      showMsg(context, 'No record found');
       return;
     }
     setState(() {
-      items = Provider.of<AppDataProvider>(context,listen: false).getExpansionItems(data);
+      items = Provider.of<AppDataProvider>(context, listen: false).getExpansionItems(data);
     });
   }
 }

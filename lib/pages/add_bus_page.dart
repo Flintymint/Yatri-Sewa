@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yatrisewa/customwidgets/login_alert_dailog.dart';
 import 'package:yatrisewa/datasource/temp_db.dart';
 import 'package:yatrisewa/providers/app_data_provider.dart';
 import 'package:yatrisewa/utils/helper_functions.dart';
@@ -49,9 +50,12 @@ class _AddBusPageState extends State<AddBusPage> {
               children: [
                 _buildDropdownField('Select Bus Type', busTypes),
                 const SizedBox(height: 12),
-                _buildTextField(nameController, 'Bus Name', Icons.directions_bus),
-                _buildTextField(numberController, 'Bus Number', Icons.confirmation_number),
-                _buildTextField(seatController, 'Total Seats', Icons.event_seat, isNumber: true),
+                _buildTextField(
+                    nameController, 'Bus Name', Icons.directions_bus),
+                _buildTextField(
+                    numberController, 'Bus Number', Icons.confirmation_number),
+                _buildTextField(seatController, 'Total Seats', Icons.event_seat,
+                    isNumber: true),
                 const SizedBox(height: 20),
                 _buildSubmitButton(),
               ],
@@ -70,11 +74,13 @@ class _AddBusPageState extends State<AddBusPage> {
       dropdownColor: Colors.black,
       onChanged: (value) => setState(() => busType = value),
       validator: (value) => value == null ? 'Please select a Bus Type' : null,
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e)))
+          .toList(),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, IconData icon, {bool isNumber = false}) {
+  Widget _buildTextField(TextEditingController controller, String hint,
+      IconData icon, {bool isNumber = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextFormField(
@@ -82,7 +88,10 @@ class _AddBusPageState extends State<AddBusPage> {
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
         style: const TextStyle(color: Colors.white, fontSize: 16),
         decoration: _underlinedInputDecoration(hint, icon),
-        validator: (value) => value == null || value.isEmpty ? 'This field cannot be empty' : null,
+        validator: (value) =>
+        value == null || value.isEmpty
+            ? 'This field cannot be empty'
+            : null,
       ),
     );
   }
@@ -122,7 +131,7 @@ class _AddBusPageState extends State<AddBusPage> {
   void addBus() {
     if (_formKey.currentState!.validate()) {
       final bus = Bus(
-        busId: TempDB.tableBus.length + 1,
+        //busId: TempDB.tableBus.length + 1,
         busName: nameController.text,
         busNumber: numberController.text,
         busType: busType!,
@@ -130,16 +139,21 @@ class _AddBusPageState extends State<AddBusPage> {
       );
       Provider.of<AppDataProvider>(context, listen: false)
           .addBus(bus)
-          .then((response){
-        if(response.responseStatus == ResponseStatus.SAVED){
+          .then((response) {
+        if (response.responseStatus == ResponseStatus.SAVED) {
           showMsg(context, response.message);
+          resetFields();
+        } else if (response.responseStatus == ResponseStatus.EXPIRED ||
+            response.responseStatus == ResponseStatus.UNAUTHORIZED) {
+          showLoginAlertDialog(
+              context: context,
+              message: response.message,
+              callback: (){
+                Navigator.pushNamed(context, routeNameLoginPage);
+              },
+          );
         }
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bus added successfully!')),
-      );
-
-      resetFields();
     }
   }
 

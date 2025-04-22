@@ -8,8 +8,9 @@ import 'package:yatrisewa/utils/constants.dart';
 
 import '../utils/helper_functions.dart';
 
+
 class BookingConfirmationPage extends StatefulWidget {
-  const BookingConfirmationPage({super.key});
+  const BookingConfirmationPage({Key? key}) : super(key: key);
 
   @override
   State<BookingConfirmationPage> createState() =>
@@ -21,33 +22,30 @@ class _BookingConfirmationPageState extends State<BookingConfirmationPage> {
   late String departureDate;
   late int totalSeatsBooked;
   late String seatNumbers;
-  bool isFirst = true;
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final mobileController = TextEditingController();
   final emailController = TextEditingController();
+  bool isFirst = true;
 
   @override
   void initState() {
-    nameController.text = 'Mr. Sandy';
-    mobileController.text = '001122334455';
-    emailController.text = 'sandy@gmail.com';
+    nameController.text = 'Mr. ABC';
+    mobileController.text = '01711000001';
+    emailController.text = 'abc@gmail.com';
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     if (isFirst) {
-      final argList = ModalRoute
-          .of(context)!
-          .settings
-          .arguments as List;
+      final argList = ModalRoute.of(context)!.settings.arguments as List;
       departureDate = argList[0];
       schedule = argList[1];
       seatNumbers = argList[2];
       totalSeatsBooked = argList[3];
-      isFirst = false;
     }
+    isFirst = false;
     super.didChangeDependencies();
   }
 
@@ -58,163 +56,196 @@ class _BookingConfirmationPageState extends State<BookingConfirmationPage> {
         title: const Text('Confirm Booking'),
       ),
       body: Form(
-          key: _formkey,
-          child: ListView(
-            padding: const EdgeInsets.all(8.0),
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Please provide your information',
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(8),
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Please provide your information',
+                style: TextStyle(fontSize: 16),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    hintText: 'Customer Name',
-                    filled: true,
-                    prefixIcon: const Icon(Icons.person),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return emptyFieldErrMessage;
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {});
-                  },
+            ),
+            Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 40.0, vertical: 4.0),
+              child: TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'Customer Name',
+                  filled: true,
+                  prefixIcon: const Icon(Icons.person),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return emptyFieldErrMessage;
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {});
+                },
               ),
-              Padding(
+            ),
+            Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 40.0, vertical: 4.0),
+              child: TextFormField(
+                keyboardType: TextInputType.phone,
+                controller: mobileController,
+                decoration: InputDecoration(
+                  hintText: 'Mobile Number',
+                  filled: true,
+                  prefixIcon: const Icon(Icons.call),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return emptyFieldErrMessage;
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {});
+                },
+              ),
+            ),
+            Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 40.0, vertical: 4.0),
+              child: TextFormField(
+                keyboardType: TextInputType.emailAddress,
+                controller: emailController,
+                decoration: InputDecoration(
+                  hintText: 'Email Address',
+                  filled: true,
+                  prefixIcon: const Icon(Icons.email),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return emptyFieldErrMessage;
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {});
+                },
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Booking Summery',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            Card(
+              child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                    controller: mobileController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      hintText: 'Mobile Number',
-                      filled: true,
-                      prefixIcon: const Icon(Icons.call),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Customer Name: ${nameController.text}',
+                      style: TextStyle(fontSize: 16),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return emptyFieldErrMessage;
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {});
-                    }),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: 'E-mail Address',
-                      filled: true,
-                      prefixIcon: const Icon(Icons.mail),
+                    Text(
+                      'Mobile Number: ${mobileController.text}',
+                      style: TextStyle(fontSize: 16),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return emptyFieldErrMessage;
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {});
-                    }),
-              ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Booking Info',
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
+                    Text(
+                      'Email Address: ${emailController.text}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Route: ${schedule.busRoute.routeName}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Departure Date: $departureDate',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Departure Time: ${schedule.departureTime}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Ticket Price: $currency${schedule.ticketPrice}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Total Seat(s): $totalSeatsBooked',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Seat Number(s): $seatNumbers',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Discount: ${schedule.discount}%',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Processing Fee: $currency${schedule.processingFee}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Grand Total: $currency${getGrandTotal(schedule.discount, totalSeatsBooked, schedule.ticketPrice, schedule.processingFee)}',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ],
                 ),
               ),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Customer Name: ${nameController.text}'),
-                      Text('Mobile Number: ${mobileController.text}'),
-                      Text('Email Address: ${emailController.text}'),
-                      Text('Route: ${schedule.busRoute.routeName}'),
-                      Text('Departure Date: $departureDate'),
-                      Text('Departure Time: ${schedule.departureTime}'),
-                      Text('Ticket Price: $currency${schedule.ticketPrice}'),
-                      Text('Total Seat(s): $totalSeatsBooked'),
-                      Text('Seat Number(s): $seatNumbers'),
-                      Text('Discount: ${schedule.discount}%'),
-                      Text('Processing Fee: ${schedule.processingFee}%'),
-                      Text(
-                          'Grand Total: $currency${getGrandTotal(
-                              schedule.discount, totalSeatsBooked,
-                              schedule.ticketPrice, schedule.processingFee)}'),
-                    ],
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: _confirmBooking,
-                child: const Text('CONFIRM BOOKING'),
-              )
-            ],
-          )),
+            ),
+            ElevatedButton(
+              onPressed: _confirmBooking,
+              child: const Text('CONFIRM BOOKING'),
+            )
+          ],
+        ),
+      ),
     );
   }
 
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    mobileController.dispose();
+    super.dispose();
+  }
+
   void _confirmBooking() {
-    if (_formkey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
       final customer = Customer(
         customerName: nameController.text,
         mobile: mobileController.text,
         email: emailController.text,
       );
 
-      final reservation = BusReservation(customer: customer,
-          busSchedule: schedule,
-          timestamp: DateTime
-              .now()
-              .microsecondsSinceEpoch,
-          departureDate: departureDate,
-          totalSeatBooked: totalSeatsBooked,
-          seatNumbers: seatNumbers,
-          reservationStatus: reservationActive,
-          totalPrice: getGrandTotal(
-              schedule.discount, totalSeatsBooked, schedule.ticketPrice, schedule.processingFee),
+      final reservation = BusReservation(
+        customer: customer,
+        busSchedule: schedule,
+        timestamp: DateTime.now().millisecondsSinceEpoch,
+        departureDate: departureDate,
+        totalSeatBooked: totalSeatsBooked,
+        seatNumbers: seatNumbers,
+        reservationStatus: reservationActive,
+        totalPrice: getGrandTotal(schedule.discount, totalSeatsBooked, schedule.ticketPrice, schedule.processingFee),
       );
       Provider.of<AppDataProvider>(context, listen: false)
-      .addReservation(reservation)
-      .then((response){
-        if (response.responseStatus == ResponseStatus.SAVED){
+          .addReservation(reservation)
+          .then((response) {
+        if(response.responseStatus == ResponseStatus.SAVED) {
           showMsg(context, response.message);
           Navigator.popUntil(context, ModalRoute.withName(routeNameHome));
-          }else{
+        } else {
           showMsg(context, response.message);
         }
       })
-      .catchError((error){
+          .catchError((error) {
         showMsg(context, 'Could not save');
       });
     }
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    mobileController.dispose();
-    emailController.dispose();
-    super.dispose();
   }
 }

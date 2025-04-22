@@ -22,8 +22,6 @@ class SeatPlanView extends StatelessWidget {
   Widget build(BuildContext context) {
     final noOfRows = (isBusinessClass ? totalSeat / 3 : totalSeat / 4).toInt();
     final noOfColumns = isBusinessClass ? 3 : 4;
-
-    //making rows and column for the seat view
     List<List<String>> seatArrangement = [];
     for (int i = 0; i < noOfRows; i++) {
       List<String> columns = [];
@@ -33,11 +31,11 @@ class SeatPlanView extends StatelessWidget {
       seatArrangement.add(columns);
     }
     final List<String> bookedSeatList =
-        bookedSeatNumbers.isEmpty ? [] : bookedSeatNumbers.split(',');
+    bookedSeatNumbers.isEmpty ? [] : bookedSeatNumbers.split(',');
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all(8),
       width: MediaQuery.of(context).size.width * 0.80,
       decoration: BoxDecoration(
           color: Colors.grey.shade200,
@@ -45,43 +43,39 @@ class SeatPlanView extends StatelessWidget {
           border: Border.all(
             color: Colors.grey,
             width: 2,
-          ),
-      ),
+          )),
       child: Column(
         children: [
           const Text(
-            "Driver",
+            'FRONT',
             style: TextStyle(
               fontSize: 30,
               color: Colors.grey,
             ),
           ),
-          const Divider(
-            height: 2,
-            color: Colors.black,
-          ),
+          const Divider(height: 2, color: Colors.black,),
           Column(
             children: [
-              for (int i = 0; i < seatArrangement.length; i++)
+              for(int i = 0; i < seatArrangement.length; i++)
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    for (int j = 0; j < seatArrangement[i].length; j++)
+                    for(int j = 0; j < seatArrangement[i].length; j++)
                       Row(
                         children: [
                           Seat(
-                            label: seatArrangement[i][j],
                             isBooked: bookedSeatList.contains(seatArrangement[i][j]),
+                            label: seatArrangement[i][j],
                             onSelect: (value) {
                               onSeatSelected(value, seatArrangement[i][j]);
                             },
                           ),
-                          if (isBusinessClass && j == 0)
+                          if(isBusinessClass && j == 0)
                             const SizedBox(width: 24,),
                           if(!isBusinessClass && j == 1)
                             const SizedBox(width: 24,),
                         ],
-                      )
+                      ),
                   ],
                 ),
             ],
@@ -129,25 +123,25 @@ class _SeatState extends State<Seat> {
           color: widget.isBooked
               ? seatBookedColor
               : selected
-                  ? seatSelectedColor
-                  : seatAvailableColor,
+              ? seatSelectedColor
+              : seatAvailableColor,
           borderRadius: BorderRadius.circular(8),
           boxShadow: widget.isBooked
               ? null
               : [
-                  const BoxShadow(
-                    color: Colors.white,
-                    offset: Offset(-3, -3),
-                    blurRadius: 5,
-                    spreadRadius: 2,
-                  ),
-                  BoxShadow(
-                    color: Colors.grey.shade400,
-                    offset: Offset(3, 3),
-                    blurRadius: 5,
-                    spreadRadius: 2,
-                  )
-                ],
+            const BoxShadow(
+              color: Colors.white,
+              offset: Offset(-4, -4),
+              blurRadius: 5,
+              spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: Colors.grey.shade400,
+              offset: Offset(4, 4),
+              blurRadius: 5,
+              spreadRadius: 2,
+            )
+          ],
         ),
         child: Text(
           widget.label,

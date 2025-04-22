@@ -34,8 +34,13 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  khalti_flutter: ^3.0.0
   intl:
   provider:
+  http:
+  shared_preferences:
+  freezed_annotation:
+  json_annotation:
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +52,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  build_runner:
+  freezed:
+  json_serializable:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

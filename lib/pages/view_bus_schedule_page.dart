@@ -3,12 +3,15 @@ import 'package:provider/provider.dart';
 import 'package:yatrisewa/providers/app_data_provider.dart';
 import 'package:yatrisewa/models/bus_schedule.dart';
 
+import '../drawers/main_drawer.dart';
+
 class ViewBusSchedulePage extends StatelessWidget {
   const ViewBusSchedulePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MainDrawer(),
       appBar: AppBar(
         title: const Text('View Bus Schedules'),
       ),

@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
         routeNameSearchResultPage : (context) => const SearchResultPage(),
         routeNameSeatPlanPage : (context) => const SeatPlanPage(),
         routeNameBookingConfirmationPage : (context) => const BookingConfirmationPage(),
+        //routeNameKhaltiPay : (context) => const KhaltiPaymentPage(),
         routeNameAddBusPage : (context) => const AddBusPage(),
         routeNameViewBuses : (context) => const ViewBusesPage(),
         routeNameAddRoutePage : (context) => const AddRoutePage(),
