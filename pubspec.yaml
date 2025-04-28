@@ -1,4 +1,4 @@
-name: yatrisewa
+name: drive
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.7.2
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -34,13 +34,15 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  khalti_flutter: ^3.0.0
-  intl:
-  provider:
-  http:
-  shared_preferences:
-  freezed_annotation:
-  json_annotation:
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  http: ^1.2.1
+  logger: ^2.0.2
+  intl: ^0.20.2
+  khalti_checkout_flutter: ^1.0.0-dev.8
+  webview_flutter: ^4.2.2
+  image_picker: ^1.0.0
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
@@ -52,9 +54,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-  build_runner:
-  freezed:
-  json_serializable:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

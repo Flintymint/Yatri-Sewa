@@ -1,0 +1,37 @@
+{
+  "amount": 10000,
+  "purchase_order_id": "TRIP_29",
+  "purchase_order_name": "Bus Ticket Booking",
+  "return_url": "khalti://payment-callback",
+  "customer_info": {
+    "name": "Traveller",
+    "email": "",
+    "phone": ""
+  },
+  "amount_breakdown": [
+    {
+      "label": "Base Fare",
+      "amount": 10000
+    },
+    {
+      "label": "Tax",
+      "amount": 0
+    }
+  ],
+  "product_details": [
+    {
+      "identity": "A3",
+      "name": "Seat A3",
+      "unit_price": 5000,
+      "total_price": 5000,
+      "quantity": 1
+    },
+    {
+      "identity": "A4",
+      "name": "Seat A4",
+      "unit_price": 5000,
+      "total_price": 5000,
+      "quantity": 1
+    }
+  ]
+}
