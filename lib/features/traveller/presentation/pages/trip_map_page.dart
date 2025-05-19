@@ -86,7 +86,6 @@ class _TripMapPageState extends State<TripMapPage> with SingleTickerProviderStat
       ),
       body: Column(
         children: [
-          // Search bar and button removed as per user request
           Expanded(
             child: _loadingRoute
                 ? const Center(child: CircularProgressIndicator())
@@ -121,18 +120,18 @@ class _TripMapPageState extends State<TripMapPage> with SingleTickerProviderStat
                                   LatLng carPos;
                                   final status = widget.trip['tripStatus'] ?? '';
                                   if (status == 'teardown' && route.length > 1) {
-                                    // Place car in the middle of the route
+                                    // Place bus in the middle of the route
                                     final midIdx = (route.length / 2).floor();
                                     carPos = route[midIdx];
                                   } else if (status == 'departed' && route.length > 1) {
-                                    // Animate the car along the route continuously
+                                    // Animate the bus along the route continuously
                                     final t = _animation.value;
                                     int index = (t * (route.length - 1)).floor();
                                     if (index < 0) index = 0;
                                     if (index >= route.length) index = route.length - 1;
                                     carPos = route[index];
                                   } else {
-                                    // Default: Place car at the 'from' point
+                                    // Default: Place bus at the 'from' point
                                     carPos = fromLatLng;
                                   }
                                   return MarkerLayer(
